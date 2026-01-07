@@ -81,18 +81,34 @@ const MovieSearcher = ({ open, onClose, onSelect }) => {
                                 onSelect(movie);
                                 handleClose();
                             }}
+                            sx={{
+                                // flexDirection: { xs: 'column', sm: 'row' },
+                                alignItems: 'center',
+                                textAlign: { xs: 'center', sm: 'left' },
+                                py: { xs: 2, sm: 1 }
+                            }}
                         >
-                            <ListItemAvatar>
-                                <Avatar
-                                    src={getImageUrl(movie.poster_path)}
-                                    variant="rounded"
-                                    sx={{ width: 50, height: 75, mr: 2 }}
-                                />
-                            </ListItemAvatar>
+                            <Box
+                                component="img"
+                                src={getImageUrl(movie.poster_path)}
+                                alt={movie.title}
+                                sx={{
+                                    width: { xs: 120, sm: 50 },
+                                    height: { xs: 180, sm: 75 },
+                                    borderRadius: 1,
+                                    objectFit: 'cover',
+                                    mr: { xs: 0, sm: 2 },
+                                    mb: { xs: 2, sm: 0 },
+                                    boxShadow: { xs: 3, sm: 0 }
+                                }}
+                            />
                             <ListItemText
                                 primary={movie.title}
                                 secondary={movie.release_date ? movie.release_date.split('-')[0] : 'Unknown Year'}
-                                primaryTypographyProps={{ fontWeight: 'bold' }}
+                                primaryTypographyProps={{
+                                    fontWeight: 'bold',
+                                    fontSize: { xs: '1.1rem', sm: '1rem' }
+                                }}
                             />
                         </ListItem>
                     ))}
