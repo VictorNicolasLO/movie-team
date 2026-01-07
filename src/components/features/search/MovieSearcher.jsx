@@ -1,0 +1,106 @@
+
+import React, { useState, useEffect, useRef } from 'react';
+import {
+    Box,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    List,
+    ListItem,
+    ListItemAvatar,
+    Avatar,
+    ListItemText,
+    Typography,
+    CircularProgress
+} from '@mui/material';
+import Input from '../../common/Input';
+import Button from '../../common/Button';
+import { searchMovies, getImageUrl } from '../../../lib/tmdb';
+
+const MovieSearcher = ({ open, onClose, onSelect }) => {
+    const [query, setQuery] = useState('');
+    const [results, setResults] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const searchTimeout = useRef(null);
+
+    useEffect(() => {
+        if (searchTimeout.current) {
+            clearTimeout(searchTimeout.current);
+        }
+
+        if (!query) {
+            setResults([]);
+            return;
+        }
+
+        // Debounce search by 2 seconds (as requested)
+        searchTimeout.current = setTimeout(async () => {
+            setLoading(true);
+            const movies = await searchMovies(query);
+            setResults(movies);
+            setLoading(false);
+        }, 300);
+
+        return () => clearTimeout(searchTimeout.current);
+    }, [query]);
+
+    const handleClose = () => {
+        setQuery('');
+        setResults([]);
+        onClose();
+    };
+
+    return (
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+            <DialogTitle>Suggest a Movie</DialogTitle>
+            <DialogContent>
+                <Input
+                    autoFocus
+                    label="Search Movie..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Type to search..."
+                />
+
+                {loading && (
+                    <Box display="flex" justifyContent="center" my={2}>
+                        <CircularProgress />
+                    </Box>
+                )}
+
+                <List>
+                    {results.map((movie) => (
+                        <ListItem
+                            key={movie.id}
+                            button
+                            onClick={() => {
+                                onSelect(movie);
+                                handleClose();
+                            }}
+                        >
+                            <ListItemAvatar>
+                                <Avatar
+                                    src={getImageUrl(movie.poster_path)}
+                                    variant="rounded"
+                                    sx={{ width: 50, height: 75, mr: 2 }}
+                                />
+                            </ListItemAvatar>
+                            <ListItemText
+                                primary={movie.title}
+                                secondary={movie.release_date ? movie.release_date.split('-')[0] : 'Unknown Year'}
+                                primaryTypographyProps={{ fontWeight: 'bold' }}
+                            />
+                        </ListItem>
+                    ))}
+                    {!loading && query && results.length === 0 && (
+                        <Typography variant="body2" align="center" color="textSecondary">
+                            No movies found.
+                        </Typography>
+                    )}
+                </List>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+export default MovieSearcher;
