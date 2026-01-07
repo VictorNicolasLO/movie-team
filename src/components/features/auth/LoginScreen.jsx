@@ -11,7 +11,7 @@ const LoginScreen = () => {
     const [roomName, setRoomName] = useState('');
     const [key, setKey] = useState('');
     const [username, setUsername] = useState('');
-    const [passkey, setPasskey] = useState(''); // New state for passkey
+
     const [error, setError] = useState('');
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -44,11 +44,7 @@ const LoginScreen = () => {
             if (userFetchError) throw userFetchError;
 
             if (existingUser) {
-                // Verify passkey
-                if (existingUser.passkey !== passkey) {
-                    setError('Invalid user passkey! This username is already taken.');
-                    return;
-                }
+                // User exists, allow login without passkey check
             } else {
                 // Register new user
                 const { error: createError } = await supabase
@@ -56,7 +52,7 @@ const LoginScreen = () => {
                     .insert({
                         room_id: roomData.id,
                         username: username,
-                        passkey: passkey
+                        passkey: ''
                     });
 
                 if (createError) throw createError;
@@ -83,13 +79,7 @@ const LoginScreen = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
             />
-            <Input
-                label="User Passkey"
-                type="password"
-                value={passkey}
-                onChange={(e) => setPasskey(e.target.value)}
-                placeholder="Protect your username"
-            />
+
             <Input
                 label="Room Name"
                 value={roomName}
@@ -108,7 +98,7 @@ const LoginScreen = () => {
                 </Typography>
             )}
 
-            <Button onClick={handleJoin} disabled={!roomName || !key || !username || !passkey}>
+            <Button onClick={handleJoin} disabled={!roomName || !key || !username}>
                 Join Room
             </Button>
             <Button variant="text" onClick={() => navigate('/create')}>

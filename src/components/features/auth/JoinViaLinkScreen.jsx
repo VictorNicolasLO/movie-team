@@ -9,7 +9,7 @@ import { supabase } from '../../../lib/supabase';
 const JoinViaLinkScreen = () => {
     const [searchParams] = useSearchParams();
     const [username, setUsername] = useState('');
-    const [passkey, setPasskey] = useState('');
+
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
     const [roomName, setRoomName] = useState('');
@@ -83,17 +83,14 @@ const JoinViaLinkScreen = () => {
             if (userFetchError) throw userFetchError;
 
             if (existingUser) {
-                if (existingUser.passkey !== passkey) {
-                    setError('Invalid passkey for this username.');
-                    return;
-                }
+                // User exists, allow join
             } else {
                 const { error: createError } = await supabase
                     .from('room_users')
                     .insert({
                         room_id: roomData.id,
                         username: username,
-                        passkey: passkey
+                        passkey: ''
                     });
 
                 if (createError) throw createError;
@@ -140,13 +137,7 @@ const JoinViaLinkScreen = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
             />
-            <Input
-                label="Passkey"
-                type="password"
-                value={passkey}
-                onChange={(e) => setPasskey(e.target.value)}
-                placeholder="Create or enter your passkey"
-            />
+
 
             {error && (
                 <Typography color="error" variant="body2" sx={{ mb: 2 }}>
@@ -154,7 +145,7 @@ const JoinViaLinkScreen = () => {
                 </Typography>
             )}
 
-            <Button onClick={handleJoin} disabled={!username || !passkey}>
+            <Button onClick={handleJoin} disabled={!username}>
                 Join Room
             </Button>
             <Button variant="text" onClick={() => navigate('/')}>

@@ -11,7 +11,7 @@ const CreateRoomScreen = () => {
     const [roomName, setRoomName] = useState('');
     const [key, setKey] = useState('');
     const [username, setUsername] = useState('');
-    const [passkey, setPasskey] = useState(''); // New state
+
     const [error, setError] = useState('');
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -48,7 +48,7 @@ const CreateRoomScreen = () => {
             .insert({
                 room_id: data.id,
                 username: username,
-                passkey: passkey
+                passkey: ''
             });
 
         if (userError) {
@@ -73,13 +73,7 @@ const CreateRoomScreen = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
             />
-            <Input
-                label="Your Passkey"
-                type="password"
-                value={passkey}
-                onChange={(e) => setPasskey(e.target.value)}
-                placeholder="Secure your identity"
-            />
+
             <Input
                 label="Room Name"
                 value={roomName}
@@ -98,7 +92,7 @@ const CreateRoomScreen = () => {
                 </Typography>
             )}
 
-            <Button onClick={handleCreate} disabled={!roomName || !key || !username || !passkey}>
+            <Button onClick={handleCreate} disabled={!roomName || !key || !username}>
                 Create & Join
             </Button>
             <Button variant="text" onClick={() => navigate('/')}>
