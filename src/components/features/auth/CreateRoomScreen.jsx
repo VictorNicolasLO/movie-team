@@ -11,6 +11,7 @@ const CreateRoomScreen = () => {
     const [roomName, setRoomName] = useState('');
     const [key, setKey] = useState('');
     const [username, setUsername] = useState('');
+    const [passkey, setPasskey] = useState(''); // New state
     const [error, setError] = useState('');
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -25,7 +26,8 @@ const CreateRoomScreen = () => {
             .insert([
                 {
                     name: roomName,
-                    hash_key: compositeKey
+                    hash_key: compositeKey,
+                    created_by: username
                 }
             ])
             .select()
@@ -37,6 +39,21 @@ const CreateRoomScreen = () => {
             } else {
                 setError('Error creating room: ' + insertError.message);
             }
+            return;
+        }
+
+        // Register Creator in room_users
+        const { error: userError } = await supabase
+            .from('room_users')
+            .insert({
+                room_id: data.id,
+                username: username,
+                passkey: passkey
+            });
+
+        if (userError) {
+            console.error("Error creating user:", userError);
+            setError('Room created but failed to register user. Please try joining manually.');
             return;
         }
 
@@ -56,6 +73,13 @@ const CreateRoomScreen = () => {
                 onChange={(e) => setUsername(e.target.value)}
             />
             <Input
+                label="Your Passkey"
+                type="password"
+                value={passkey}
+                onChange={(e) => setPasskey(e.target.value)}
+                placeholder="Secure your identity"
+            />
+            <Input
                 label="Room Name"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
@@ -73,7 +97,7 @@ const CreateRoomScreen = () => {
                 </Typography>
             )}
 
-            <Button onClick={handleCreate} disabled={!roomName || !key || !username}>
+            <Button onClick={handleCreate} disabled={!roomName || !key || !username || !passkey}>
                 Create & Join
             </Button>
             <Button variant="text" onClick={() => navigate('/')}>

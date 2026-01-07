@@ -11,6 +11,7 @@ const LoginScreen = () => {
     const [roomName, setRoomName] = useState('');
     const [key, setKey] = useState('');
     const [username, setUsername] = useState('');
+    const [passkey, setPasskey] = useState(''); // New state for passkey
     const [error, setError] = useState('');
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -20,19 +21,55 @@ const LoginScreen = () => {
         const compositeKey = `${roomName.trim()}-${key.trim()}`;
 
         // Check if room exists
-        const { data, error } = await supabase
+        const { data: roomData, error: roomError } = await supabase
             .from('rooms')
-            .select('id, hash_key')
+            .select('id, hash_key, created_by')
             .eq('hash_key', compositeKey)
-            .single();
+            .maybeSingle();
 
-        if (error || !data) {
+        if (roomError || !roomData) {
             setError('Room not found! Check your name and key.');
             return;
         }
 
-        login(username, compositeKey, false); // Default to non-admin for joiners
-        navigate(`/room/${data.id}`);
+        // Check/Create User in Room
+        try {
+            const { data: existingUser, error: userFetchError } = await supabase
+                .from('room_users')
+                .select('passkey')
+                .eq('room_id', roomData.id)
+                .eq('username', username)
+                .maybeSingle();
+
+            if (userFetchError) throw userFetchError;
+
+            if (existingUser) {
+                // Verify passkey
+                if (existingUser.passkey !== passkey) {
+                    setError('Invalid user passkey! This username is already taken.');
+                    return;
+                }
+            } else {
+                // Register new user
+                const { error: createError } = await supabase
+                    .from('room_users')
+                    .insert({
+                        room_id: roomData.id,
+                        username: username,
+                        passkey: passkey
+                    });
+
+                if (createError) throw createError;
+            }
+
+            const isAdmin = roomData.created_by === username;
+            login(username, compositeKey, isAdmin);
+            navigate(`/room/${roomData.id}`);
+
+        } catch (err) {
+            console.error(err);
+            setError('Error joining room: ' + err.message);
+        }
     };
 
     return (
@@ -47,12 +84,19 @@ const LoginScreen = () => {
                 onChange={(e) => setUsername(e.target.value)}
             />
             <Input
+                label="User Passkey"
+                type="password"
+                value={passkey}
+                onChange={(e) => setPasskey(e.target.value)}
+                placeholder="Protect your username"
+            />
+            <Input
                 label="Room Name"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
             />
             <Input
-                label="Room Key"
+                label="Room Key (Secret)"
                 type="password"
                 value={key}
                 onChange={(e) => setKey(e.target.value)}
@@ -64,7 +108,7 @@ const LoginScreen = () => {
                 </Typography>
             )}
 
-            <Button onClick={handleJoin} disabled={!roomName || !key || !username}>
+            <Button onClick={handleJoin} disabled={!roomName || !key || !username || !passkey}>
                 Join Room
             </Button>
             <Button variant="text" onClick={() => navigate('/create')}>

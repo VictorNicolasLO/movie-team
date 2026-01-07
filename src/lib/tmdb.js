@@ -12,7 +12,14 @@ export const searchMovies = async (query) => {
 
     try {
         const response = await fetch(
-            `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`
+            `${BASE_URL}/search/movie?query=${encodeURIComponent(query)}`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${API_KEY}`
+                }
+            }
         );
         const data = await response.json();
         return data.results || [];
