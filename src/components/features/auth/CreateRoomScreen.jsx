@@ -57,6 +57,7 @@ const CreateRoomScreen = () => {
             return;
         }
 
+
         login(username, compositeKey, true); // Creator is admin
         navigate(`/room/${data.id}`);
     };
