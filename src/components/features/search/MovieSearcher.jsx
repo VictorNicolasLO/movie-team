@@ -55,11 +55,15 @@ const MovieSearcher = ({ open, onClose, onSelect }) => {
             <DialogTitle>Suggest a Movie</DialogTitle>
             <DialogContent>
                 <Input
+
                     autoFocus
                     label="Search Movie..."
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Type to search..."
+                    style={{
+                        overflow: 'visible'
+                    }}
                 />
 
                 {loading && (
