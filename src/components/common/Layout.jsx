@@ -7,7 +7,7 @@ const Layout = ({ children }) => {
         <Container maxWidth="md">
             <Box sx={{ my: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold', mb: 4, background: 'white', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                    Movie team
+                    Movie Team
                 </Typography>
                 <Box sx={{ width: '100%' }}>
                     {children}
