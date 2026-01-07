@@ -53,7 +53,7 @@ const MovieSearcher = ({ open, onClose, onSelect }) => {
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
             <DialogTitle>Suggest a Movie</DialogTitle>
-            <DialogContent>
+            <DialogContent style={{ overflow: 'visible' }}>
                 <Input
 
                     autoFocus
