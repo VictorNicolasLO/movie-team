@@ -65,7 +65,7 @@ const MovieItem = ({ suggestion }) => {
                         <Box sx={{ display: 'flex', alignItems: 'center', mr: 'auto', bgcolor: 'rgba(255,255,255,0.05)', borderRadius: 1 }}>
                             <IconButton
                                 size="small"
-                                onClick={() => vote(id, 1)}
+                                onClick={() => myVote < 1 && vote(id, myVote + 1)}
                                 color={myVote === 1 ? 'primary' : 'default'}
                             >
                                 <ArrowUpward fontSize="small" />
@@ -75,7 +75,7 @@ const MovieItem = ({ suggestion }) => {
                             </Typography>
                             <IconButton
                                 size="small"
-                                onClick={() => vote(id, -1)}
+                                onClick={() => myVote > -1 && vote(id, myVote - 1)}
                                 color={myVote === -1 ? 'secondary' : 'default'}
                             >
                                 <ArrowDownward fontSize="small" />

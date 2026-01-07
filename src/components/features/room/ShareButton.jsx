@@ -7,16 +7,16 @@ const ShareButton = ({ roomName, roomKey }) => {
     const [open, setOpen] = useState(false);
 
     const handleShare = () => {
-        // For now, we will just copy the Room Name and Key
-        // Or we could construct a URL if we had a dedicated join route with query params
-        // But per requirements: "If you are joining from a link you should be able to put your username and a secretKey"
-        // I will just copy the text for now as a simple implementation or generate a hypothetical link
+        try {
+            // Encode the key in base64
+            const encodedKey = btoa(roomKey);
+            const link = `${window.location.origin}/join?room=${encodedKey}`;
 
-        // We didn't build a /join?key=... route yet, so let's stick to copying info
-        const text = `Join my Movie Night room!\nRoom: ${roomName}\nKey: ${roomKey.split('-').pop()}`; // Assuming composite key roomName-key
-
-        navigator.clipboard.writeText(text);
-        setOpen(true);
+            navigator.clipboard.writeText(link);
+            setOpen(true);
+        } catch (e) {
+            console.error("Failed to generate link", e);
+        }
     };
 
     return (
@@ -30,7 +30,7 @@ const ShareButton = ({ roomName, roomKey }) => {
                 open={open}
                 autoHideDuration={2000}
                 onClose={() => setOpen(false)}
-                message="Room details copied to clipboard!"
+                message="Room join link copied to clipboard!"
             />
         </>
     );

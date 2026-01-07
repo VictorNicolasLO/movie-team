@@ -2,14 +2,15 @@
 import React from 'react';
 import { Container, Box, Typography } from '@mui/material';
 
-const Layout = ({ children }) => {
+const AuthLayout = ({ children }) => {
     return (
         <Container maxWidth="md">
             <Box sx={{ my: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold', mb: 4, background: 'white', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                     Movie Night
                 </Typography>
-                <Box sx={{ width: '100%' }}>
+
+                <Box display={'flex'} justifyContent={'center'} sx={{ width: '100%' }}>
                     {children}
                 </Box>
             </Box>
@@ -17,4 +18,4 @@ const Layout = ({ children }) => {
     );
 };
 
-export default Layout;
+export default AuthLayout;

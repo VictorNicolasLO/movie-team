@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS public.votes (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     suggestion_id UUID NOT NULL REFERENCES public.suggestions(id) ON DELETE CASCADE,
     voter_id TEXT NOT NULL, -- Username or unique ID
-    value INT NOT NULL CHECK (value IN (-1, 1)),
+    value INT NOT NULL CHECK (value IN (-1, 1, 0)),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     UNIQUE(suggestion_id, voter_id)
 );
