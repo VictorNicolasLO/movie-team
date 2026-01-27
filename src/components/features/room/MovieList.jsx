@@ -17,7 +17,7 @@ const MovieList = ({ suggestions }) => {
     const sortedSuggestions = [...suggestions].sort((a, b) => b.score - a.score);
 
     return (
-        <Box>
+        <Box style={{ paddingBottom: '80px' }}>
             {sortedSuggestions.map((suggestion) => (
                 <MovieItem key={suggestion.id} suggestion={suggestion} />
             ))}
