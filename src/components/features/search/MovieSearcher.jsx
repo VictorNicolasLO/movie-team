@@ -56,35 +56,45 @@ const MovieSearcher = ({ open, onClose, onSelect }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     return (
-        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" fullScreen={isMobile}>
+        <Dialog scroll='paper' open={open} onClose={handleClose} fullWidth maxWidth="sm" fullScreen={isMobile}>
             <DialogTitle sx={{ m: 0, p: 2 }}>
-                Suggest a Movie
-                <IconButton
-                    aria-label="close"
-                    onClick={handleClose}
-                    sx={{
-                        position: 'absolute',
-                        right: 8,
-                        top: 8,
-                        color: (theme) => theme.palette.grey[500],
-                    }}
-                >
-                    <CloseIcon />
-                </IconButton>
-            </DialogTitle>
-            <DialogContent style={{ overflow: 'visible' }}>
-                <Stack>
-                    <Input
+                <Stack spacing={2}>
+                    <Box>
+                        Suggest a Movie
+                        <IconButton
+                            aria-label="close"
+                            onClick={handleClose}
+                            sx={{
+                                position: 'absolute',
+                                right: 8,
+                                top: 8,
+                                color: (theme) => theme.palette.grey[500],
+                            }}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    </Box>
 
-                        autoFocus
-                        label="Search Movie..."
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Type to search..."
-                        style={{
-                            overflow: 'visible'
-                        }}
-                    />
+                    <Box>
+                        <Input
+
+                            autoFocus
+                            label="Search Movie..."
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            placeholder="Type to search..."
+                            style={{
+                                overflow: 'visible'
+                            }}
+                        />
+                    </Box>
+                </Stack>
+
+
+            </DialogTitle>
+            <DialogContent dividers={true}>
+                <Stack>
+
 
                     {loading && (
                         <Box display="flex" justifyContent="center" my={2}>
